@@ -10,11 +10,12 @@
     <title>主页</title>
 </head>
 <body>
-<c:if test="${sessionScope.username eq null}">
+<c:if test="${sessionScope.role ne '用户'}">
     <c:redirect url="default.jsp"/>
 </c:if>
 <h1>主页</h1>
 ${sessionScope.username}
+<p><a href="user?action=logout">注销</a></p>
 <hr>
 
 </body>
