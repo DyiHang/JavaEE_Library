@@ -31,27 +31,37 @@ ${sessionScope.username}
     <input type="submit" value="查找">
 </form>
 <hr>
-<table>
-    <tr>
-        <th>序号</th>
-        <th>标题</th>
-        <th>作者</th>
-        <th>出版社</th>
-        <th>出版时间</th>
-        <th>定价</th>
-        <th>数量</th>
-    </tr>
-    <c:forEach var="book" items="${sessionScope.books}" varStatus="vs">
+<form action="userBook" method="post">
+    <input type="hidden" name="action" value="add">
+    <input type="hidden" name="userId" value="${sessionScope.userId}">
+    <table>
         <tr>
-            <td>${vs.count}</td>
-            <td>${book.title}</td>
-            <td>${book.author}</td>
-            <td>${book.pub}</td>
-            <td>${book.time}</td>
-            <td>${book.price}</td>
-            <td>${book.amount}</td>
+            <th>序号</th>
+            <th>标题</th>
+            <th>作者</th>
+            <th>出版社</th>
+            <th>出版时间</th>
+            <th>定价</th>
         </tr>
-    </c:forEach>
-</table>
+        <c:forEach var="book" items="${sessionScope.books}" varStatus="vs">
+            <tr>
+                <td>
+                    <c:if test="${book.amount gt 0}">
+                        <input type="checkbox" name="bookIds" value="${book.id}">
+                    </c:if>
+                    <c:if test="${book.amount eq 0}">
+                        <input type="checkbox" disabled="disabled">
+                    </c:if>
+                        ${vs.count}</td>
+                <td>${book.title}</td>
+                <td>${book.author}</td>
+                <td>${book.pub}</td>
+                <td>${book.time}</td>
+                <td>${book.price}</td>
+            </tr>
+        </c:forEach>
+    </table>
+    <input type="submit" value="借书">
+</form>
 </body>
 </html>
