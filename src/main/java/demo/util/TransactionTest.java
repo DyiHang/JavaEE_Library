@@ -18,22 +18,31 @@ public class TransactionTest {
             if (connection == null) {
                 return;
             }
+            connection.setAutoCommit(false); // 关闭自动提交；同时开启了一次事务
             preparedStatement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             preparedStatement.executeUpdate(); // DML 1 : INSERT
+
 
             resultSet = preparedStatement.getGeneratedKeys();
             resultSet.next();
             int id = resultSet.getInt(1);
             System.out.println("id: " + id);
 
+            System.out.println(1/0);
+
             sql = "DELETE FROM javaee_library.user WHERE id = ?";
             preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setInt(1, id);
             preparedStatement.executeUpdate(); // DML 2 : DELETE
 
-
-        } catch (SQLException e) {
+            connection.commit(); // 2. commit
+        } catch (Exception e) {
             e.printStackTrace();
+            try {
+                connection.rollback(); // 3. rollback
+            } catch (SQLException e1) {
+                e1.printStackTrace();
+            }
         } finally {
             Db.close(resultSet, preparedStatement, connection);
         }

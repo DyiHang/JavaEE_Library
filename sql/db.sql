@@ -37,12 +37,13 @@ CREATE TABLE javaee_library.book (
 
 DROP TABLE IF EXISTS javaee_library.user_book;
 CREATE TABLE javaee_library.user_book (
-  userId     INT COMMENT 'PK FK',
-  bookId     INT COMMENT 'PK FK',
+  id         INT      AUTO_INCREMENT PRIMARY KEY
+  COMMENT 'PK',
+  userId     INT COMMENT 'FK',
+  bookId     INT COMMENT 'FK',
   borrowTime DATETIME DEFAULT now()
   COMMENT '借书时间',
-  returnTime DATETIME COMMENT '还书时间',
-  PRIMARY KEY (userId, bookId)
+  returnTime DATETIME COMMENT '还书时间'
 )
   COMMENT '用户-图书表';
 
@@ -60,14 +61,17 @@ REFERENCES javaee_library.book (id);
 
 INSERT INTO javaee_library.user (username, password, role) VALUES ('admin1', '123', '管理员');
 
-
 SELECT *
 FROM javaee_library.user;
-
-
 
 SELECT *
 FROM javaee_library.book;
 
 SELECT *
 FROM javaee_library.user_book;
+
+START TRANSACTION;
+INSERT INTO javaee_library.user VALUE (NULL, 'u1', 'p', 'r');
+INSERT INTO javaee_library.user VALUE (NULL, 'u2', 'p', 'r');
+ROLLBACK;
+COMMIT;
