@@ -19,5 +19,5 @@ public class DateTest {
         System.out.println(date);
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
         System.out.println(format.format(date));
-    }
+    } // spaceX
 }

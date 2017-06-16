@@ -75,3 +75,20 @@ INSERT INTO javaee_library.user VALUE (NULL, 'u1', 'p', 'r');
 INSERT INTO javaee_library.user VALUE (NULL, 'u2', 'p', 'r');
 ROLLBACK;
 COMMIT;
+
+SELECT
+  b.title,
+  ub.borrowTime,
+  ub.returnTime
+FROM javaee_library.book b INNER JOIN javaee_library.user_book ub
+    ON b.id = ub.bookId
+WHERE ub.userId = 2;
+
+SELECT
+  u.username,
+  b.title,
+  ub.borrowTime,
+  ub.returnTime
+FROM javaee_library.book b INNER JOIN javaee_library.user u
+  INNER JOIN javaee_library.user_book ub
+    ON b.id = ub.bookId AND u.id = ub.userId
