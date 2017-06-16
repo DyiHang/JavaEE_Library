@@ -58,11 +58,13 @@ ALTER TABLE javaee_library.user_book
 FOREIGN KEY (bookId)
 REFERENCES javaee_library.book (id);
 
-INSERT INTO javaee_library.user (username, password, role) VALUES ('admin', '123', '管理员');
+INSERT INTO javaee_library.user (username, password, role) VALUES ('admin1', '123', '管理员');
 
 
 SELECT *
 FROM javaee_library.user;
+
+
 
 SELECT *
 FROM javaee_library.book;

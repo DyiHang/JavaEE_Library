@@ -38,11 +38,44 @@ public class UserBookAction extends HttpServlet {
         int userId = Integer.parseInt(req.getParameter("userId"));
         String[] bookIds = req.getParameterValues("bookIds");
 
-        for (String bookId : bookIds) {
-            insert(req, resp, userId, Integer.parseInt(bookId));
+        for (String bookIdString : bookIds) {
+            int bookId = Integer.parseInt(bookIdString);
+            if (canBorrow(bookId, req, resp)) {
+                // DML TRANSACTION
+                insert(req, resp, userId, bookId); // INSERT INTO db.table VALUES (?, ?, ...);
+                // TODO: 6/16/17 UPDATE db.table SET amount = amount - 1 WHERE id = bookId;
+            } else {
+                // TODO: 6/16/17 通知用户那些书不能借
+            }
         }
-
         resp.sendRedirect("index.jsp");
+    }
+
+    private boolean canBorrow(int bookId, HttpServletRequest req, HttpServletResponse resp) {
+        Connection connection = Db.getConnection();
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+
+        String sql = "SELECT * FROM javaee_library.book WHERE id = ?";
+
+        try {
+            if (connection != null) {
+                preparedStatement = connection.prepareStatement(sql);
+            } else {
+                Error.showError(req, resp);
+                return false;
+            }
+            preparedStatement.setInt(1, bookId);
+            resultSet = preparedStatement.executeQuery();
+            resultSet.next();
+            int amount = resultSet.getInt("amount");
+            if (amount > 0) {
+                return true;
+            }
+        } catch (SQLException | IOException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
     private void insert(HttpServletRequest req, HttpServletResponse resp, int userId, int bookId) throws IOException {
