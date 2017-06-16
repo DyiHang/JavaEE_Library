@@ -8,6 +8,9 @@
 <html>
 <head>
     <title>主页</title>
+    <style>
+        @import "css/style.css";
+    </style>
 </head>
 <body>
 <c:if test="${sessionScope.role ne '用户'}">
@@ -20,14 +23,35 @@ ${sessionScope.username}
 <form action="book" method="post">
     <input type="hidden" name="action" value="query">
     <select name="key">
-        <option value="">书名</option>
-        <option value="">作者</option>
-        <option value="">出版社</option>
+        <option value="title">书名</option>
+        <option value="author">作者</option>
+        <option value="pub">出版社</option>
     </select>
     <input type="text" name="value" placeholder="关键词">
     <input type="submit" value="查找">
 </form>
 <hr>
-
+<table>
+    <tr>
+        <th>序号</th>
+        <th>标题</th>
+        <th>作者</th>
+        <th>出版社</th>
+        <th>出版时间</th>
+        <th>定价</th>
+        <th>数量</th>
+    </tr>
+    <c:forEach var="book" items="${sessionScope.books}" varStatus="vs">
+        <tr>
+            <td>${vs.count}</td>
+            <td>${book.title}</td>
+            <td>${book.author}</td>
+            <td>${book.pub}</td>
+            <td>${book.time}</td>
+            <td>${book.price}</td>
+            <td>${book.amount}</td>
+        </tr>
+    </c:forEach>
+</table>
 </body>
 </html>

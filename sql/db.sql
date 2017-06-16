@@ -43,3 +43,5 @@ FROM javaee_library.user;
 
 SELECT *
 FROM javaee_library.book;
+
+SELECT * FROM javaee_library.book WHERE title LIKE '%HTML%'
