@@ -44,6 +44,11 @@ public class BookAction extends HttpServlet {
             return;
         }
 
+        if ("remove".equals(action)) {
+            remove(req, resp);
+            return;
+        }
+
 
         if ("modify".equals(action)) {
             modify(req, resp);
@@ -201,6 +206,32 @@ public class BookAction extends HttpServlet {
             preparedStatement.setInt(6, amount);
             preparedStatement.setInt(7, id);
 
+            preparedStatement.executeUpdate();
+
+            resp.sendRedirect("book?action=queryAll");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            Db.close(null, preparedStatement, connection);
+        }
+    }
+
+    private void remove(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
+        int id = Integer.parseInt(req.getParameter("id"));
+
+        Connection connection = Db.getConnection();
+        PreparedStatement preparedStatement = null;
+        String sql = "DELETE FROM javaee_library.book WHERE id = ?";
+
+        try {
+            if (connection != null) {
+                preparedStatement = connection.prepareStatement(sql);
+            } else {
+                Error.showError(req, resp);
+                return;
+            }
+            preparedStatement.setInt(1, id);
             preparedStatement.executeUpdate();
 
             resp.sendRedirect("book?action=queryAll");
