@@ -100,66 +100,22 @@ public class UserAction extends HttpServlet {
         }
     }
 
-
-    private void isUsernameExist(HttpServletRequest req, HttpServletResponse response) {
-        String username = req.getParameter("username").trim();
-        System.out.println(username);
-        Connection connection = Db.getConnection();
-        PreparedStatement preparedStatement = null;
-        ResultSet resultSet = null;
-
-        String sql = "SELECT * FROM javaee_library.user WHERE username = ?";
-
-        response.setContentType("text/html charset=UTF-8");
-        Writer writer = null;
-        try {
-            writer = response.getWriter();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        try {
-            if (connection != null) {
-                preparedStatement = connection.prepareStatement(sql);
-            } else {
-                // TODO: 6/21/17
-
-            }
-            preparedStatement.setString(1, username);
-            resultSet = preparedStatement.executeQuery();
-            if (resultSet.next()) {
-                writer.write("true");
-            }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            Db.close(resultSet, preparedStatement, connection);
-        }
-
-        try {
-            writer.write("false");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
     private void register(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
+        if (isUsernameExist(req, resp)) {
+            req.setAttribute("message", "用户名已经存在");
+            req.getRequestDispatcher("register.jsp").forward(req, resp);
+            return;
+        }
+
         String username = req.getParameter("username").trim();
         String password = req.getParameter("password");
 
         Connection connection = Db.getConnection();
         PreparedStatement preparedStatement = null;
-
-//        if (isUsernameExist(req, resp)) {
-//            req.setAttribute("message", "用户名存在");
-//            req.getRequestDispatcher("register.jsp").forward(req, resp);
-//            return;
-//        }
+        String sql = "INSERT INTO javaee_library.user(username, password) VALUES(?, ?)";
 
         try {
-            String sql = "INSERT INTO javaee_library.user(username, password) VALUES(?, ?)";
 
             if (connection != null) {
                 preparedStatement = connection.prepareStatement(sql);
@@ -269,6 +225,46 @@ public class UserAction extends HttpServlet {
             e.printStackTrace();
         }
         return null;
+    }
+
+    private boolean isUsernameExist(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
+        String username = req.getParameter("username").trim();
+
+        Connection connection = Db.getConnection();
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+
+        String sql = "SELECT * FROM javaee_library.user WHERE username = ?";
+
+        resp.setContentType("text/html; charset=UTF-8");
+        Writer writer = resp.getWriter();
+
+        try {
+            if (connection != null) {
+                preparedStatement = connection.prepareStatement(sql);
+            } else {
+                Error.showError(req, resp);
+                return false; // ?
+            }
+
+            preparedStatement.setString(1, username);
+            resultSet = preparedStatement.executeQuery();
+
+            if (resultSet.next()) {
+                writer.write("true");
+                return true;
+            } else {
+                writer.write("false");
+                return false;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            Db.close(resultSet, preparedStatement, connection);
+        }
+        Error.showError(req, resp);
+        return false;
     }
 
     @Override

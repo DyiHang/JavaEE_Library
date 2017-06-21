@@ -13,13 +13,31 @@
             $('#username').blur(function () {
                 $.ajax({
                     url: 'user',
-                    data: {'action': 'isUsernameExist', 'username': $('#username').val()},
+                    method: 'post',
+                    data: {'action': 'isUsernameExist', 'username': $(this).val()},
                     success: function (data) {
                         console.log(data);
                         if (data == 'true') {
-                            $('span').text('用户名已经存在');
+                            $('span').css('color', '#f00').text('用户名已经存在');
                         } else {
-                            $('span').text('用户名可以使用');
+                            $('span').css('color', '#0f0').text('用户名可以使用');
+                        }
+                    }
+                });
+            });
+            $('form').submit(function (e) {
+                $.ajax({
+                    url: 'user',
+                    method: 'post',
+                    data: {'action': 'isUsernameExist', 'username': $('#username').val()},
+                    success: function (data) {
+                        if (data == 'true') {
+                            $('span').css('color', '#f00').text('用户名已经存在');
+                            e.preventDefault(); //
+                            return false;
+                        } else {
+                            $('span').css('color', '#0f0').text('用户名可以使用...');
+                            return true;
                         }
                     }
                 });
